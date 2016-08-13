@@ -60,21 +60,23 @@ def get_twitter_client(twitterTokens):
 
 @app.before_first_request
 def init():
-	twClient = get_twitter_client(TWITTER_TOKENS)
-	response = twClient.api.users.show.get(screen_name='twitter')
-	print response.data
+	pass
 
 @app.route('/')
 def render_home_page():
-	return "<span>TWITTER API Activated</span>"
+	twClient = get_twitter_client(TWITTER_TOKENS)
+	response = twClient.api.users.show.get(screen_name='twitter')
+	print response.data
+	return '''<span>TWITTER API Activated</span><br>\
+	<span>Hello, {0}!</span>'''.format(response.data['name'])
 
 @app.route('/getPushNotifications')
 def get_push_notifications():
 	return "@twitterUser mentioned you in a tweet"
 
-@app.route('/getFashionStatment')
+@app.route('/getFashionStatment' methods = [ 'GET','POST'])
 def get_fashion_statement():
-	pass
+	return "#IoT is trending right now"
 
 if __name__ == '__main__':
 	app.logger.addHandler(logging.StreamHandler(sys.stdout))
