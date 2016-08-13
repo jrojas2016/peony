@@ -47,7 +47,7 @@ def get_twitter_client(twitterTokens):
 	'''
 	consumerKey = twitterTokens['consumer_key']
 	consumerSecret = twitterTokens['consumer_secret']
-	accessToken = twitterTokens['access_tokens']
+	accessToken = twitterTokens['access_token']
 	if accessToken is None:
 		client = tw.AppClient(consumerKey, consumerSecret)
 		accessToken = client.get_access_token()
