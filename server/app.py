@@ -74,7 +74,7 @@ def render_home_page():
 def get_push_notifications():
 	return "@twitterUser mentioned you in a tweet"
 
-@app.route('/getFashionStatment', methods = [ 'GET','POST'])
+@app.route('/getFashionStatement', methods = [ 'GET','POST'])
 def get_fashion_statement():
 	return "#IoT is trending right now"
 
