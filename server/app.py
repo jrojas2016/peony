@@ -42,11 +42,15 @@ def decode_notifications(notifList):
 	pkgList = []
 	for curr_notif in notifList:
 		authorId = curr_notif['user']['id']
-		print type(authorId), authorId
+		print type(authorId), authorId 	#DEBUG
 		if authorId == 224360775:
 			pkgList.append('-m1')
-		else:
+		elif authorId == 26443744:
 			pkgList.append('-m2')
+		elif authorId == 911629549:
+			pkgList.append('-m3')
+		else:
+			pkgList.append('-m4')
 
 	return pkgList
 
@@ -75,10 +79,10 @@ def render_home_page():
 @app.route('/getPushNotifications')
 def get_push_notifications():
 	twClient = get_twitter_client(TWITTER_TOKENS)
-	response = twClient.api.statuses.mentions_timeline.get(count = 3, trim_user = 1)
+	response = twClient.api.statuses.mentions_timeline.get(count = 7, trim_user = 1)
 	# print response.data	#DEBUG
 	pkgList = decode_notifications(response.data)
-	print pkgList
+	print pkgList 	#DEBUG
 	return str(pkgList)
 
 @app.route('/getFashionStatement', methods = [ 'GET','POST'])
