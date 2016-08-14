@@ -38,25 +38,31 @@ def curl( url, data = None, authToken = None ):
 	res = response.read()
 	return res
 
-def save_access_token(twitterTokens, fileName):
-	json.dump(twitterTokens, open('conf.json', 'w') )
+def decode_notifications(notifList):
+	pkgList = []
+	for curr_notif in notifList:
+		authorId = curr_notif['user']['id']
+		print type(authorId), authorId
+		if authorId == 224360775:
+			pkgList.append('-m1')
+		else:
+			pkgList.append('-m2')
+
+	return pkgList
 
 def get_twitter_client(twitterTokens):
 	'''
 	Return a twitter app client instance
 	'''
-	consumerKey = twitterTokens['consumer_key']
-	consumerSecret = twitterTokens['consumer_secret']
-	accessToken = twitterTokens['access_token']
-	if accessToken is None:
-		client = tw.AppClient(consumerKey, consumerSecret)
-		accessToken = client.get_access_token()
-		twitterTokens['access_token'] = accessToken
-		save_access_token(twitterTokens, TWITTER_CONF)
-	else:
-		client = tw.AppClient(consumerKey, consumerSecret, accessToken)
+	twClient = getattr(fl.g, '_twClient', None)
+	if twClient is None:
+		consumerKey = twitterTokens['consumer_key']
+		consumerSecret = twitterTokens['consumer_secret']
+		accessToken = twitterTokens['access_token']
+		accessTokenSecret = twitterTokens['access_token_secret']
+		twClient = fl.g._twClient = tw.UserClient(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 
-	return client
+	return twClient
 
 @app.before_first_request
 def init():
@@ -64,15 +70,16 @@ def init():
 
 @app.route('/')
 def render_home_page():
-	twClient = get_twitter_client(TWITTER_TOKENS)
-	response = twClient.api.users.show.get(screen_name='twitter')
-	print response.data
-	return '''<span>TWITTER API Activated</span><br>\
-	<span>Hello, {0}!</span>'''.format(response.data['name'])
+	return "<span>PEONY SERVER ONLINE</span>"
 
 @app.route('/getPushNotifications')
 def get_push_notifications():
-	return "@twitterUser mentioned you in a tweet"
+	twClient = get_twitter_client(TWITTER_TOKENS)
+	response = twClient.api.statuses.mentions_timeline.get(count = 3, trim_user = 1)
+	# print response.data	#DEBUG
+	pkgList = decode_notifications(response.data)
+	print pkgList
+	return str(pkgList)
 
 @app.route('/getFashionStatement', methods = [ 'GET','POST'])
 def get_fashion_statement():
