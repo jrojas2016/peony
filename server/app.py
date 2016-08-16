@@ -78,12 +78,14 @@ def render_home_page():
 
 @app.route('/getPushNotifications')
 def get_push_notifications():
+	pkg = {}
 	twClient = get_twitter_client(TWITTER_TOKENS)
 	response = twClient.api.statuses.mentions_timeline.get(count = 7, trim_user = 1)
 	# print response.data	#DEBUG
 	pkgList = decode_notifications(response.data)
 	# print pkgList 	#DEBUG
-	return str(pkgList)
+	pkg['data'] = pkgList
+	return json.dumps(pkg)
 
 @app.route('/getFashionStatement', methods = [ 'GET','POST'])
 def get_fashion_statement():
