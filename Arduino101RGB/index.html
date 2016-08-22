@@ -45,19 +45,25 @@ using BLE (Bluetooth Low Energy).
 		<!--<button class="menu" onclick=""><img src="ui/images/menu.svg" /></button>-->
 	</header>
 
-	<h1>Arduino101 LED On/Off BLE</h1>
+	<h1>Arduino101 LED RGB BLE</h1>
 
 	<p id="info">Initializing...</p>
 
-	<button class="yellow wide" onclick="app.connect()">CONNECT</button>
+	<button class="black wide" onclick="app.connect()">CONNECT</button>
 
 	<br />
 
-	<button class="green wide big" onclick="app.ledOn()">LED ON</button>
-
+	<button class="red wide big" onclick="app.ledRed()">LED ON RED</button>
+	<button class="green wide big" onclick="app.ledGreen()">LED ON GREEN</button>
+	<button class="blue wide big" onclick="app.ledBlue()">LED ON BLUE</button>
+	<button class="yellow wide big" onclick="app.ledYellow()">LED ON YELLOW</button>
+	<button class="green wide big" onclick="app.ledCyan()">LED ON CYAN</button>
+	<button class="red wide big" onclick="app.ledPurple()">LED ON PURPLE</button>
+	<button class="yellow wide big" onclick="app.ledWhite()">LED ON WHITE</button>
+	
 	<br />
 
-	<button class="red wide big" onclick="app.ledOff()">LED OFF</button>
+	<button class="black wide big" onclick="app.ledOff()">LED OFF</button>
 
 	<script>
 	// Application object.
@@ -66,12 +72,48 @@ using BLE (Bluetooth Low Energy).
 	// Connected device.
 	app.device = null;
 
-	// Turn on LED.
-	app.ledOn = function()
+	// Turn on LED red.
+	app.ledRed = function()
 	{
 		app.device && app.device.writeDataArray(new Uint8Array([1]), '19b10001-e8f2-537e-4f6c-d104768a1214');
 	}
+	
+	// Turn on LED green
+	app.ledGreen = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([2]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
 
+		// Turn on LED blue
+	app.ledBlue = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([3]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
+
+		// Turn on LED yellow
+	app.ledYellow = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([4]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
+
+		// Turn on LED cyan
+	app.ledCyan = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([5]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
+
+		// Turn on LED purple
+	app.ledPurple = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([6]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
+
+		// Turn on LED white
+	app.ledWhite = function()
+	{
+		app.device && app.device.writeDataArray(new Uint8Array([7]), '19b10001-e8f2-537e-4f6c-d104768a1214');
+	}
+	
 	// Turn off LED.
 	app.ledOff = function()
 	{
