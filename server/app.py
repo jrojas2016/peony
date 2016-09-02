@@ -103,6 +103,7 @@ def send_sms_alert():
     	from_="+16502850342") # Replace with your Twilio number
 
 	print(message.sid)
+	return fl.redirect(fl.url_for('render_home_page'))
 
 '''
   "accnt_sid": "AC4c3fa7c3b1f769cb84c6cbf4bb32b59d",
