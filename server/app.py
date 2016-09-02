@@ -93,8 +93,8 @@ def get_fashion_statement():
 
 @app.route('/sendSMSAlert')
 def send_sms_alert():
-	account_sid = "SK0c5a19d901e67bd467d0cab9b143b189" # Your Account SID from www.twilio.com/console
-	auth_token  = "vCXnABkqxFpHBAQLqRQ45I4MoaTjl3Qc"  # Your Auth Token from www.twilio.com/console
+	account_sid = "AC8885646939013beffa55d1f57a4ad1a8" # Your Account SID from www.twilio.com/console
+	auth_token  = "1ca2de59a66530e3cd20c43e365222e8"  # Your Auth Token from www.twilio.com/console
 
 	client = TwilioRestClient(account_sid, auth_token)
 
