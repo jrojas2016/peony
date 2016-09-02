@@ -2,3 +2,4 @@ birdy==0.2
 Flask==0.10.1
 gunicorn==19.3.0
 virtualenv==13.1.2
+twilio==5.4.0

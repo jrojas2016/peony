@@ -4,7 +4,7 @@ PEONY SERVER:
 	on Web APIs and relay to
 	curie Geniuno board
 '''
-
+from twilio.rest import TwilioRestClient
 import birdy.twitter as tw	# twitter client library
 import flask as fl
 import logging
@@ -90,6 +90,20 @@ def get_push_notifications():
 @app.route('/getFashionStatement', methods = [ 'GET','POST'])
 def get_fashion_statement():
 	return "#IoT is trending right now"
+
+@app.route('/sendSMSAlert')
+def send_sms_alert():
+	account_sid = "AC358010c34f1e4c852e6ad97c5a680caa" # Your Account SID from www.twilio.com/console
+	auth_token  = "{{ a55a30fbfaf4c566af4bdd19a7c9e688 }}"  # Your Auth Token from www.twilio.com/console
+
+	client = TwilioRestClient(account_sid, auth_token)
+
+	message = client.messages.create(body="Your friend Judy is in danger!",
+	    to="+16504636413",    # Replace with your phone number
+    	from_="+17876926076") # Replace with your Twilio number
+
+	print(message.sid)
+
 
 if __name__ == '__main__':
 	app.logger.addHandler(logging.StreamHandler(sys.stdout))
