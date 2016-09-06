@@ -102,8 +102,9 @@ def send_sms_alert():
 	client = TwilioRestClient(account_sid, auth_token)
 
 	message = client.messages.create(
-		body="Your friend Judy is in danger!" + 
-		" She was last found at long: {0}; lat: {1}".format(longitude, latitude),
+		body="""Your friend Judy is in danger!
+			She was last found at:\nhttp://maps.google.com/maps
+			?q={0},{1}&ll={0},{1}&z=17""".format(latitude, longitude),
 	    to="+1{0}".format(toNum),    # Replace with your phone number
     	from_="+16506810047") # Replace with your Twilio number
 
