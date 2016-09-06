@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--
+	Description:
+
+	BLE example application that demonstrates how to communicate
+	with an Arduino BLE shield.
+
+	Requirements:
+
+	See text in the app user interface.
+-->
+<html>
+
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, user-scalable=no,
+		shrink-to-fit=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+
+	<title>Peony BLE</title>
+
+	<style>
+		@import 'ui/css/evothings-app.css';
+	</style>
+
+	<script>
+	// Redirect console.log to Evothings Workbench.
+	if (window.hyper && window.hyper.log) { console.log = hyper.log }
+	</script>
+
+	<script src="cordova.js"></script>
+	<script src="libs/jquery/jquery.js"></script>
+	<script src="libs/evothings/evothings.js"></script>
+	<script src="libs/evothings/ui/ui.js"></script>
+	<script src="app.js"></script>
+
+</head>
+
+<body ontouchstart=""><!-- ontouchstart="" enables low-delay CSS transitions. -->
+
+	<header>
+		<button class="back" onclick="history.back()">
+			<img src="ui/images/arrow-left.svg" />
+		</button>
+
+		<img class="logotype" src="ui/images/logo.svg" alt="Evothings" />
+
+		<!--<button class="menu" onclick=""><img src="ui/images/menu.svg" /></button>-->
+	</header>
+
+	<h1>Peony BLE</h1>
+
+	<p><strong>Status:</strong> <span id="status">Idle</span></p>
+
+	<button id="on" onclick="app.on();" class="green">LED ON</button>
+	<button id="off" onclick="app.off();" class="red">LED OFF</button>
+
+	<h2>Button state value</h2>
+	<button id="buttonstate" class="black">Button State</button>
+
+	<h2>Emergency Contact</h2>
+	<p>Name: </p>
+	<input type="text" id="contact" name="name">
+	<p>Phone Number: </p>
+	<input type="text" id="contact-num" name="number" value="6504636413">
+
+	<h2>Geo Location</h2>
+	<iframe
+		id="location"
+		width="300"
+		height="450"
+		frameborder="0" style="border:0"
+		src="" allowfullscreen>
+	</iframe>
+</body>
+
+</html>

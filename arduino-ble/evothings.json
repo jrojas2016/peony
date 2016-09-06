@@ -1,0 +1,27 @@
+{
+  "name": "arduino-ble",
+  "version": "1.0",
+  "title": "Arduino BLE",
+  "description": "Basic example app to get started with Bluetooth Low Energy (BLE) using an Arduino and a BLE shield",
+  "tags": [
+    {
+      "label": "arduino",
+      "type": "platform"
+    },
+    {
+      "label": "ble",
+      "type": "comm"
+    }
+  ],
+  "libraries": [
+    {
+      "name": "jquery",
+      "version": "2.1.1"
+    }
+  ],
+  "index-file": "index.html",
+  "app-dir": "app",
+  "uuid": "c19bee15-3467-4864-bcf5-d3ff61fa6901",
+  "icon": "app-icon.png",
+  "doc-url": "https://evothings.com/2.1/doc/examples/arduino-ble.html"
+}
