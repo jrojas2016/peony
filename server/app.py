@@ -15,8 +15,6 @@ import os
 sys.path.append(os.getcwd())
 
 app = fl.Flask(__name__)
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.ERROR)
 
 HOST_URL = 'http://localhost:5000/'	# local use only
 # HOST_URL = 'http://peony-curie.herokuapp.com/getTwitterPush'
