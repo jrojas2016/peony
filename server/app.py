@@ -95,14 +95,19 @@ def get_fashion_statement():
 def send_sms_alert():
 	account_sid = "AC8885646939013beffa55d1f57a4ad1a8" # Your Account SID from www.twilio.com/console
 	auth_token  = "1ca2de59a66530e3cd20c43e365222e8"  # Your Auth Token from www.twilio.com/console
+	longitude = fl.request.args.get('long')
+	latitude = fl.request.args.get('lat')
+	toNum = fl.request.args.get('to_num')
 
 	client = TwilioRestClient(account_sid, auth_token)
 
-	message = client.messages.create(body="Your friend Judy is in danger!",
-	    to="+16504636413",    # Replace with your phone number
+	message = client.messages.create(
+		body="Your friend Judy is in danger!" + 
+		" She was last found at long: {0}; lat: {1}".format(longitude, latitude),
+	    to="+1{0}".format(toNum),    # Replace with your phone number
     	from_="+16506810047") # Replace with your Twilio number
 
-	print(message.sid)
+	# print(message.sid)	# DEBUG
 	return fl.redirect(fl.url_for('render_home_page'))
 
 if __name__ == '__main__':
