@@ -6,11 +6,22 @@
  */
 var ble = null;
 
+// Comment out for debugging
 $(document).ready( function()
 {
 	// Adding event listeners for GPS buttons
 	app.watchPosition();
 });
+
+var sensorWeights = 
+{
+	bpm: 0.2,
+	fall: 0.2,
+	xshock: 0.2,
+	yshock: 0.2,
+	zshock: 0.2,
+	threshold: 0.4
+}
 
 /**
  * Application object that holds data and functions used by the app.
@@ -32,8 +43,10 @@ var app =
 	characteristicWrite: null,
 	descriptorNotification: null,
 
-	// Data that is plotted on the canvas.
-	dataPoints: [],
+	// Payload string collection variables
+	startSending: false,
+	finished: false,
+	payloadString: '',
 
 	initialize: function()
 	{
@@ -71,7 +84,7 @@ var app =
 				}
 				console.log('found device: ' + deviceInfo.name);
 				app.knownDevices[deviceInfo.address] = deviceInfo;
-				if (deviceInfo.name == 'ARDUINO 101-3E4E' && !app.connectee)
+				if (deviceInfo.name == 'tinyTILE-BB71' && !app.connectee)
 				{
 					console.log('Found Peony');
 					connectee = deviceInfo;
@@ -140,9 +153,6 @@ var app =
 			 complete : function(xhr, text)
 			 {
 				console.log("SMS Sent Successfully!");
-			 },
-			 error: function(err){
-				console.log("SMS Alert Failed: " + err);
 			 }
 		});
 	},
@@ -221,7 +231,7 @@ var app =
 			function(data)
 			{
 				app.displayStatus('Active');
-				app.changeButtonState(data);
+				app.checkValue(data);
 			},
 			function(errorCode)
 			{
@@ -229,16 +239,60 @@ var app =
 			});
 	},
 
-	changeButtonState: function (dataValue) {
-		var parsedData = new DataView(dataValue);	//Bluetooth sends a byte array; converting to int
-		if (!parsedData.getInt8(0)) {            
-			console.log("Button State: " + parsedData.getInt8(0));
-			app.sendLocation();
-			document.getElementById('buttonstate').className = "green";
+	checkValue: function (dataValue) {
+		var binaryDataArray = new DataView(dataValue);	//Bluetooth sends a byte array; converting to int
+		var inputChar = String.fromCharCode(binaryDataArray.getInt8(0))
+		if (inputChar == '}') { 
+			app.startSending = false; 
+			app.parseString(app.payloadString);
 		}
-		else {
-			console.log("Button state: " + parsedData.getInt8(0));
-			document.getElementById('buttonstate').className = "black";
+
+		if (app.startSending) {			
+			app.payloadString += inputChar
+			console.log("Payload String: " + app.payloadString);
+		}
+
+		if (inputChar == '{') { 
+			app.startSending = true; 
+			app.payloadString = '';
+		}
+	},
+
+	parseString: function(payload) {
+        console.log("Parsing string...");
+		var b = f = sx = sy = sz = th = 0.0;
+
+		for(var i = 0; i < payload.length; ){
+			switch(payload[i]){
+				case 'f':
+					f = parseInt(payload[++i]);
+                    console.log("Saved f: " + f);
+					break;
+				case 'b':
+					b = parseInt(payload[++i]);
+                    console.log("Saved b: " + b);
+					break;
+				case 's':
+					sx = parseInt(payload[++i]);
+					sy = parseInt(payload[++i]);
+					sz = parseInt(payload[++i]);
+                    console.log("Saved sx: " + sx);                  
+                    console.log("Saved sy: " + sy);                    
+                    console.log("Saved sz: " + sz);
+					break;
+				default:
+					i++;
+			}
+		}
+
+		// Weighted majority vote between sensor flags.
+		th = b*sensorWeights.bpm + f*sensorWeights.fall +
+			sx*sensorWeights.xshock + sy*sensorWeights.yshock +
+			sz*sensorWeights.zshock;
+		console.log("Calculated threshold: " + th);
+			
+		if (th >= sensorWeights.threshold) {
+			app.sendLocation();
 		}
 	},
 
@@ -304,3 +358,27 @@ var app =
 
 // Initialise app.
 app.initialize();
+
+// Testing
+function str2ab(str) {
+  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+function testCheckValue(payload) {
+	for(var i = 0; i < payload.length; i++) {
+		var arrBufChar = str2ab(payload[i])
+		app.checkValue(arrBufChar);
+	}
+}
+// testCheckValue("{f0b0s000}");
+// testCheckValue("{f0b0s001}");
+// testCheckValue("{f0b0s011}");
+// testCheckValue("{f0b0s111}");
+// testCheckValue("{f1b0s000}");
+// testCheckValue("{f1b1s000}");
+// testCheckValue("{f1b1s111}");

@@ -5,6 +5,7 @@ PEONY SERVER:
 	curie Geniuno board
 '''
 from twilio.rest import TwilioRestClient
+from pymongo import MongoClient #DB interface
 import birdy.twitter as tw	# twitter client library
 import flask as fl
 import logging
@@ -16,8 +17,9 @@ sys.path.append(os.getcwd())
 
 app = fl.Flask(__name__)
 
-HOST_URL = 'http://localhost:5000/'	# local use only
-# HOST_URL = 'http://peony-curie.herokuapp.com/'
+MONGO_URI = 'mongodb://heroku_478jfqc4:n5hhn4e7h20kqb8qv5cde9l3hn@ds033126.mlab.com:33126/heroku_478jfqc4'
+MONGO_DB = 'heroku_478jfqc4'
+
 '''TWITTER API'''
 TWITTER_CONF = 'conf.json'
 TWITTER_TOKENS = json.load( open(TWITTER_CONF) )
@@ -35,6 +37,34 @@ def curl( url, data = None, authToken = None ):
 	response = urllib2.urlopen( req )
 	res = response.read()
 	return res
+
+def get_collection(colName):
+	# Avoiding redundant connections
+	print "Connecting to DB."
+	if colName == 'ohrm':
+		col = getattr(fl.g, '_colOHRM', None)
+		if col is None:
+			mongo_client = MongoClient(MONGO_URI)
+			peony_db = mongo_client[MONGO_DB]
+			# mongo_client = MongoClient()  #Local use only
+			# peony_db = mongo_client['peonyData']
+			col = fl.g._colOHRM = peony_db[colName]
+	elif colName == 'gyro':
+		col = getattr(fl.g, '_colGyro', None)
+		if col is None:
+			mongo_client = MongoClient(MONGO_URI)
+			peony_db = mongo_client[MONGO_DB]
+			# mongo_client = MongoClient()  #Local use only
+			# peony_db = mongo_client['peonyData']
+			col = fl.g._colGyro = peony_db[colName]
+
+	return col
+
+def get_collection_data(collection, query):
+	jsonQuery = json.loads(query)
+	data = collection.find(jsonQuery)	# List of matched results from db
+	print data[0] 	# DEBUG
+	return data
 
 def decode_notifications(notifList):
 	pkgList = []
@@ -65,6 +95,16 @@ def get_twitter_client(twitterTokens):
 		twClient = fl.g._twClient = tw.UserClient(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 
 	return twClient
+
+def store_data(collection, data):
+	res = collection.insert_one(data)
+
+	if getattr(res, "acknowledged") == True:
+		msg = 'peony data saved successfully.'
+		print msg
+	else:
+		msg = 'Failed to store data to peony data collection'
+		print msg
 
 @app.before_first_request
 def init():
@@ -108,6 +148,18 @@ def send_sms_alert():
 
 	# print(message.sid)	# DEBUG
 	return fl.redirect(fl.url_for('render_home_page'))
+
+@app.route('/sensorDataInterface', methods = ['GET', 'POST'])
+def heart_rate_interface():
+	collection = get_collection('pData')
+	if fl.request.method == 'POST':
+		data = fl.request.args.get('data')
+		store_data(collection, data)
+		return fl.redirect(fl.url_for('render_home_page'))
+	elif fl.request.method == 'GET':
+		q = fl.request.args.get('q')
+		data = get_collection_data(collection, q)
+		return data
 
 if __name__ == '__main__':
 	app.logger.addHandler(logging.StreamHandler(sys.stdout))
