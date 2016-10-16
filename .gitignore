@@ -1,0 +1,5 @@
+# TOKENS #
+conf.json
+
+# BINARIES #
+*.pyc

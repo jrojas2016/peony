@@ -131,8 +131,8 @@ def get_fashion_statement():
 
 @app.route('/sendSMSAlert')
 def send_sms_alert():
-	account_sid = "AC8885646939013beffa55d1f57a4ad1a8" # Your Account SID from www.twilio.com/console
-	auth_token  = "1ca2de59a66530e3cd20c43e365222e8"  # Your Auth Token from www.twilio.com/console
+	account_sid = "XXXXXXXXXXXXXXXXXX" # Your Account SID from www.twilio.com/console
+	auth_token  = "XXXXXXXXXXXXXXXXXX"  # Your Auth Token from www.twilio.com/console
 	longitude = fl.request.args.get('long')
 	latitude = fl.request.args.get('lat')
 	toNum = fl.request.args.get('to_num')
